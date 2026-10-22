@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"html"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -114,6 +115,7 @@ type BroadcastStats struct {
 	StartTime   time.Time
 	Finished    bool
 	Cancelled   bool
+	Reasons     map[string]int
 }
 
 // broadcastTarget is one recipient of the broadcast.
@@ -132,6 +134,9 @@ func init() {
 
 <blockquote>
 <b>📋 Flags:</b>
+• <code>-user</code> — Send only to users (DM)
+• <code>-group</code> — Send only to groups
+• <code>-all</code> — Send to both users and groups (default)
 • <code>--nochat</code> — Exclude groups from broadcast
 • <code>--nouser</code> — Exclude users from broadcast
 • <code>--copy</code> — Remove forwarded tag, when broadcasting a replied message (copy mode)
@@ -144,7 +149,8 @@ func init() {
 </blockquote>
 <blockquote>
 <b>📌 Examples:</b>
-/broadcast -nochat -delay 2 Important announcement
+/broadcast -user -delay 2 Important announcement
+/broadcast -group -pin [reply to message]
 /broadcast -copy -nochat -pin [reply to message]
 /broadcast -limit 10 -delay 3 Limited broadcast
 </blockquote>
@@ -164,8 +170,10 @@ func broadcastHandler(c *td.Client, m *td.Message) error {
 	}
 	chatID := m.ChatID()
 
-	if strings.Contains(strings.ToLower(m.Text()), "-cancel") {
-		return handleBroadcastCancel(c, m)
+	for _, w := range strings.Fields(strings.ToLower(m.Text())) {
+		if w == "-cancel" || w == "--cancel" {
+			return handleBroadcastCancel(c, m)
+		}
 	}
 
 	if bManager.isActive() {
@@ -239,9 +247,16 @@ func parseBroadcastCommand(m *td.Message) (*BroadcastFlags, string, error) {
 
 	words := strings.Fields(lines[0])
 	var contentWords []string
+	var onlyUser, onlyGroup bool
 
 	for i := 0; i < len(words); i++ {
 		switch strings.ToLower(words[i]) {
+		case "-user", "--user", "-users", "--users":
+			onlyUser = true
+		case "-group", "--group", "-groups", "--groups", "-chat", "--chat", "-chats", "--chats":
+			onlyGroup = true
+		case "-all", "--all":
+			onlyUser, onlyGroup = true, true
 		case "-nochat", "--nochat":
 			flags.NoChat = true
 		case "-nouser", "--nouser":
@@ -271,6 +286,13 @@ func parseBroadcastCommand(m *td.Message) (*BroadcastFlags, string, error) {
 		default:
 			contentWords = append(contentWords, words[i])
 		}
+	}
+
+	if onlyUser && !onlyGroup {
+		flags.NoChat = true
+	}
+	if onlyGroup && !onlyUser {
+		flags.NoUser = true
 	}
 
 	content := strings.Join(contentWords, " ")
@@ -375,7 +397,8 @@ func (bm *broadcastManager) run(
 		case !props.CanBeForwarded && !props.CanBeCopied:
 			logger.Warnf("[broadcast] replied message cannot be forwarded or copied (protected content)")
 		case !props.CanBeForwarded:
-			logger.Warnf("[broadcast] replied message cannot be forwarded, only copied (use -copy)")
+			logger.Warnf("[broadcast] replied message cannot be forwarded, switching to copy mode")
+			flags.Copy = true
 		}
 	}
 
@@ -395,7 +418,7 @@ func (bm *broadcastManager) run(
 		default:
 		}
 
-		recordTarget(t, bm.send(c, m, t.id, content, flags), stats)
+		recordTarget(t, bm.send(ctx, c, m, t.id, content, flags), stats)
 
 		sent++
 		if !bm.wait(ctx, sent, flags.Delay) {
@@ -405,6 +428,7 @@ func (bm *broadcastManager) run(
 }
 
 func (bm *broadcastManager) send(
+	ctx context.Context,
 	c *td.Client,
 	m *td.Message,
 	targetID int64,
@@ -422,24 +446,41 @@ func (bm *broadcastManager) send(
 		return cerr
 	}
 
-	if m.ReplyToMessageID() > 0 {
-		msgs, ferr := c.ForwardMessages(
-			targetID,
-			m.ChatID(),
-			[]int64{m.ReplyToMessageID()},
-			&td.ForwardMessagesOpts{SendCopy: flags.Copy},
-		)
-		if ferr != nil {
-			err = ferr
-		} else if msgs == nil || len(msgs.Messages) == 0 || msgs.Messages[0].Id == 0 {
-			// TDLib returns null entries in "messages" when the forward
-			// could not be delivered to this target.
-			err = fmt.Errorf("forward returned no message")
-		} else {
-			sent = &msgs.Messages[0]
+	try := func() (*td.Message, error) {
+		if m.ReplyToMessageID() > 0 {
+			msgs, ferr := c.ForwardMessages(
+				targetID,
+				m.ChatID(),
+				[]int64{m.ReplyToMessageID()},
+				&td.ForwardMessagesOpts{SendCopy: flags.Copy},
+			)
+			if ferr != nil {
+				return nil, ferr
+			}
+			if msgs == nil || len(msgs.Messages) == 0 || msgs.Messages[0].Id == 0 {
+				return nil, fmt.Errorf("forward returned no message")
+			}
+			return &msgs.Messages[0], nil
 		}
-	} else {
-		sent, err = c.SendTextMessage(targetID, content, nil)
+		return c.SendTextMessage(targetID, content, nil)
+	}
+
+	const maxAttempts = 3
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		sent, err = try()
+		if err == nil {
+			break
+		}
+		wait := getFloodWait(err)
+		if wait <= 0 || attempt == maxAttempts {
+			break
+		}
+		logger.Warnf("Broadcast flood wait %ds for %d (attempt %d)", wait, targetID, attempt)
+		select {
+		case <-ctx.Done():
+			return context.Canceled
+		case <-time.After(time.Duration(wait) * time.Second):
+		}
 	}
 
 	if err != nil {
@@ -477,9 +518,33 @@ func ensureBroadcastChat(c *td.Client, id int64) error {
 
 // isBroadcastSkipError reports errors that are expected for removed/blocked targets.
 func isBroadcastSkipError(err error) bool {
-	return strings.Contains(err.Error(), "USER_IS_BLOCKED") ||
-		strings.Contains(err.Error(), "CHAT_WRITE_FORBIDDEN") ||
-		strings.Contains(err.Error(), "USER_IS_DEACTIVATED")
+	msg := strings.ToLower(err.Error())
+	for _, s := range []string{
+		"user_is_blocked",
+		"chat_write_forbidden",
+		"user_is_deactivated",
+		"blocked by the user",
+		"have no write access",
+		"forward returned no message",
+		"user is deactivated",
+		"chat not found",
+		"bot was kicked",
+		"bot is not a member",
+		"forbidden",
+	} {
+		if strings.Contains(msg, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func broadcastReason(err error) string {
+	r := strings.TrimSpace(err.Error())
+	if len(r) > 70 {
+		r = r[:70]
+	}
+	return r
 }
 
 // wait sleeps the configured delay, pausing longer after every 30 sends.
@@ -507,6 +572,10 @@ func recordTarget(t broadcastTarget, err error, stats *BroadcastStats) {
 			stats.FailedChats = append(stats.FailedChats, t.id)
 		}
 		fmt.Fprintf(&stats.Errors, "[%d] - [%v]\n", t.id, err)
+		if stats.Reasons == nil {
+			stats.Reasons = make(map[string]int)
+		}
+		stats.Reasons[broadcastReason(err)]++
 		return
 	}
 
@@ -592,6 +661,21 @@ func formatBroadcastProgress(
 		sb.WriteString(F(chatID, "broadcast_failed_users", locales.Arg{
 			"count": len(stats.FailedUsers),
 		}) + "\n")
+	}
+	if final && len(stats.Reasons) > 0 {
+		reasons := make([]string, 0, len(stats.Reasons))
+		for r := range stats.Reasons {
+			reasons = append(reasons, r)
+		}
+		sort.Slice(reasons, func(i, j int) bool {
+			return stats.Reasons[reasons[i]] > stats.Reasons[reasons[j]]
+		})
+		if len(reasons) > 5 {
+			reasons = reasons[:5]
+		}
+		for _, r := range reasons {
+			sb.WriteString(fmt.Sprintf("• %s — %d\n", html.EscapeString(r), stats.Reasons[r]))
+		}
 	}
 	if len(stats.FailedChats) > 0 || len(stats.FailedUsers) > 0 {
 		sb.WriteString("\n")
