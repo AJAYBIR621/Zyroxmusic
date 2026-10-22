@@ -28,6 +28,7 @@ import (
 	tg "github.com/amarnathcjd/gogram/telegram"
 
 	"KanhaMusic/kanha/core"
+	"KanhaMusic/kanha/locales"
 	"KanhaMusic/kanha/database"
 	"KanhaMusic/kanha/logger"
 	"KanhaMusic/kanha/utils"
@@ -244,7 +245,7 @@ func getParticipantUserID(peer tg.Peer) int64 {
 
 func sendVCLog(chatID, userID int64, ass *core.Assistant, joined bool, total int) {
 	name := "Unknown"
-	username := "Iɢɴᴏʀᴇᴅ"
+	username := "ɪɢɴᴏʀᴇᴅ"
 
 	if u, err := core.Bot.GetUser(userID); err == nil && u != nil {
 		name = utils.EscapeHTML(u.FirstName)
@@ -277,18 +278,12 @@ func sendVCLog(chatID, userID int64, ass *core.Assistant, joined bool, total int
 		count := vcLogger.userJoinCount[key]
 		vcLogger.mu.Unlock()
 
-		text = fmt.Sprintf(
-			"<b>🟢 #𝐉𝛐𝛊𝛈𝐕𝛊ᴅ𝛆𝛐𝐂ʜ𝛂𝛕</b>\n<blockquote><b>𝚴𝛂ϻ𝛆 ➛ <a href=\"tg://user?id=%d\">%s</a>\n𝚰𝛛 ➛ <code>%d</code>\n𝐔𝛅𝛆𝛑𝛈𝛂ϻ𝛆 ➛ %s\n👥 𝐓𝐨𝐭𝐚𝐥 𝐕𝐂 ➛ <code>%d</code></b></blockquote>",
-			userID, name, userID, username, total,
-		)
+		text = F(chatID, "vclog_join", locales.Arg{"user_id": userID, "name": name, "username": username, "total": total})
 		if count > 1 {
-			text += fmt.Sprintf("\n🔁 𝐉𝛐𝛊𝛈 𝐂𝛐𝛍𝛈𝛕 ➛ <code>%d</code>", count)
+			text += F(chatID, "vclog_join_count", locales.Arg{"count": count})
 		}
 	} else {
-		text = fmt.Sprintf(
-			"<b>🔴 #𝐋𝛆𝛏𝛕𝐕𝛊ᴅ𝛆𝛐𝐂ʜ𝛂𝛕</b>\n<blockquote><b>𝚴𝛂ϻ𝛆 ➛ <a href=\"tg://user?id=%d\">%s</a>\n𝚰𝛛 ➛ <code>%d</code>\n𝐔𝛅𝛆𝛑𝛈𝛂ϻ𝛆 ➛ %s\n👥 𝐓𝐨𝐭𝐚𝐥 𝐕𝐂 ➛ <code>%d</code></b></blockquote>",
-			userID, name, userID, username, total,
-		)
+		text = F(chatID, "vclog_leave", locales.Arg{"user_id": userID, "name": name, "username": username, "total": total})
 	}
 
 	sent, err := core.Bot.SendTextMessage(chatID, text, &td.SendTextMessageOpts{
@@ -313,7 +308,7 @@ func vcloggerHandler(c *td.Client, m *td.Message) error {
 		// Anonymous admin
 		args := strings.Fields(m.Args())
 		if len(args) == 0 {
-			_, err := m.ReplyText(c, "⚠️ ᴀɴᴏɴʏᴍᴏᴜs ᴀᴅᴍɪɴ\n\nᴜsᴇ: <code>/vclogger on</code> ᴏʀ <code>/vclogger off</code>", &td.SendTextMessageOpts{
+			_, err := m.ReplyText(c, F(chatID, "vclog_anon_usage"), &td.SendTextMessageOpts{
 				ParseMode: "HTML",
 			})
 			return err
@@ -321,21 +316,21 @@ func vcloggerHandler(c *td.Client, m *td.Message) error {
 		arg := strings.ToLower(args[0])
 		if arg == "on" || arg == "enable" || arg == "yes" {
 			if vcLogger.isRunning(chatID) {
-				_, err := m.ReplyText(c, "ℹ️ <b>𝐕ᴄ 𝐋σɢɢєꝛ 𝐈s 𝐀ʟꝛєᴧᴅʏ 𝐀ᴄᴛɪᴠє 𝐈η 𝐓ʜɪs 𝐆ꝛσυᴘ.</b>", &td.SendTextMessageOpts{
+				_, err := m.ReplyText(c, F(chatID, "vclog_already_active"), &td.SendTextMessageOpts{
 					ParseMode: "HTML",
 				})
 				return err
 			}
 			_ = database.SetVCLoggerStatus(chatID, true)
 			vcLogger.start(chatID)
-			_, err := m.ReplyText(c, "✅ <b>𝐕ᴄ 𝐋σɢɢєꝛ 𝐇ᴧs 𝐁єєη 𝐄ηᴧʙʟєᴅ!</b>", &td.SendTextMessageOpts{
+			_, err := m.ReplyText(c, F(chatID, "vclog_enabled"), &td.SendTextMessageOpts{
 				ParseMode: "HTML",
 			})
 			return err
 		} else if arg == "off" || arg == "disable" || arg == "no" {
 			_ = database.SetVCLoggerStatus(chatID, false)
 			vcLogger.stop(chatID)
-			_, err := m.ReplyText(c, "🚫 <b>𝐕ᴄ 𝐋σɢɢєꝛ 𝐇ᴧs 𝐁єєη 𝐃ɪsᴧʙʟєᴅ!</b>", &td.SendTextMessageOpts{
+			_, err := m.ReplyText(c, F(chatID, "vclog_disabled"), &td.SendTextMessageOpts{
 				ParseMode: "HTML",
 			})
 			return err
@@ -343,7 +338,7 @@ func vcloggerHandler(c *td.Client, m *td.Message) error {
 	}
 
 	if !canUseAdminCommand(c, chatID, senderID) {
-		_, err := m.ReplyText(c, "❌ <b>𝐏єꝛϻɪssɪση 𝐃єηɪєᴅ!</b>\n\n👮 <b>𝐎ηʟʏ 𝐀ᴅϻɪη 𝐎ꝛ 𝐎ᴡηєꝛs 𝐂ᴧη 𝐔sє 𝐕ᴄ 𝐋σɢɢєꝛ.</b>", &td.SendTextMessageOpts{
+		_, err := m.ReplyText(c, F(chatID, "vclog_no_permission"), &td.SendTextMessageOpts{
 			ParseMode: "HTML",
 		})
 		return err
@@ -352,14 +347,11 @@ func vcloggerHandler(c *td.Client, m *td.Message) error {
 	args := strings.Fields(m.Args())
 	if len(args) == 0 {
 		enabled, _ := database.IsVCLoggerEnabled(chatID)
-		state := "𝐄ηᴧʙʟєᴅ ✅"
+		state := F(chatID, "vclog_state_enabled")
 		if !enabled {
-			state = "𝐃ɪsᴧʙʟєᴅ ❌"
+			state = F(chatID, "vclog_state_disabled")
 		}
-		text := fmt.Sprintf(
-			"🎙 <b>𝐕ᴄ 𝐋σɢɢєꝛ 𝐒ᴛᴧᴛυs</b>\n\n➜ <b>𝐂υꝛꝛєηᴛ 𝐒ᴛᴧᴛє :</b> %s\n\n➜ <b>𝐔sᴧɢє :</b> <code>/vclogger [on / off]</code>",
-			state,
-		)
+		text := F(chatID, "vclog_status", locales.Arg{"state": state})
 		_, err := m.ReplyText(c, text, &td.SendTextMessageOpts{
 			ParseMode: "HTML",
 		})
@@ -370,14 +362,14 @@ func vcloggerHandler(c *td.Client, m *td.Message) error {
 	switch arg {
 	case "on", "enable", "yes":
 		if vcLogger.isRunning(chatID) {
-			_, err := m.ReplyText(c, "ℹ️ <b>𝐕ᴄ 𝐋σɢɢєꝛ 𝐈s 𝐀ʟꝛєᴧᴅʏ 𝐀ᴄᴛɪᴠє 𝐈η 𝐓ʜɪs 𝐆ꝛσυᴘ.</b>", &td.SendTextMessageOpts{
+			_, err := m.ReplyText(c, F(chatID, "vclog_already_active"), &td.SendTextMessageOpts{
 				ParseMode: "HTML",
 			})
 			return err
 		}
 		_ = database.SetVCLoggerStatus(chatID, true)
 		vcLogger.start(chatID)
-		_, err := m.ReplyText(c, "✅ <b>𝐕ᴄ 𝐋σɢɢєꝛ 𝐇ᴧs 𝐁єєη 𝐄ηᴧʙʟєᴅ!</b>", &td.SendTextMessageOpts{
+		_, err := m.ReplyText(c, F(chatID, "vclog_enabled"), &td.SendTextMessageOpts{
 			ParseMode: "HTML",
 		})
 		return err
@@ -385,13 +377,13 @@ func vcloggerHandler(c *td.Client, m *td.Message) error {
 	case "off", "disable", "no":
 		_ = database.SetVCLoggerStatus(chatID, false)
 		vcLogger.stop(chatID)
-		_, err := m.ReplyText(c, "🚫 <b>𝐕ᴄ 𝐋σɢɢєꝛ 𝐇ᴧs 𝐁єєη 𝐃ɪsᴧʙʟєᴅ!</b>", &td.SendTextMessageOpts{
+		_, err := m.ReplyText(c, F(chatID, "vclog_disabled"), &td.SendTextMessageOpts{
 			ParseMode: "HTML",
 		})
 		return err
 
 	default:
-		_, err := m.ReplyText(c, "❌ <b>𝐈ηᴠᴧʟɪᴅ 𝐀ꝛɢυϻєηᴛ</b>\n\n➜ <b>𝐔sᴧɢє :</b> <code>/vclogger [on / off]</code>", &td.SendTextMessageOpts{
+		_, err := m.ReplyText(c, F(chatID, "vclog_invalid_arg"), &td.SendTextMessageOpts{
 			ParseMode: "HTML",
 		})
 		return err
@@ -406,7 +398,7 @@ func vcstatsHandler(c *td.Client, m *td.Message) error {
 	chatID := m.ChatID()
 	senderID := m.SenderID()
 	if senderID != 0 && !canUseAdminCommand(c, chatID, senderID) {
-		_, err := m.ReplyText(c, "❌ <b>ᴀᴅᴍɪɴ ᴏɴʟʏ!</b>", &td.SendTextMessageOpts{
+		_, err := m.ReplyText(c, F(chatID, "vclog_admin_only"), &td.SendTextMessageOpts{
 			ParseMode: "HTML",
 		})
 		return err
@@ -416,20 +408,17 @@ func vcstatsHandler(c *td.Client, m *td.Message) error {
 	running := vcLogger.isRunning(chatID)
 	count := vcLogger.userCount(chatID)
 
-	enabledText := "❌ 𝐃ɪsᴧʙʟєᴅ"
+	enabledText := F(chatID, "vclog_disabled_short")
 	if enabled {
-		enabledText = "✅ 𝐄ηᴧʙʟєᴅ"
+		enabledText = F(chatID, "vclog_enabled_short")
 	}
 
-	runningText := "🔴 𝐒ᴛσᴘᴘєᴅ"
+	runningText := F(chatID, "vclog_stopped")
 	if running {
-		runningText = "🟢 𝐑υηηɪηɢ"
+		runningText = F(chatID, "vclog_running")
 	}
 
-	text := fmt.Sprintf(
-		"📊 <b>𝐕ᴄ 𝐋σɢɢєꝛ 𝐒ᴛᴧᴛs</b>\n\n➜ <b>𝐋σɢɢєꝛ  :</b> %s\n➜ <b>𝐌σηɪᴛσꝛ :</b> %s\n➜ <b>𝐔sєꝛ 𝐈η 𝐕𝐂 :</b> <code>%d</code>",
-		enabledText, runningText, count,
-	)
+	text := F(chatID, "vclog_stats", locales.Arg{"enabled": enabledText, "running": runningText, "count": count})
 
 	_, err := m.ReplyText(c, text, &td.SendTextMessageOpts{
 		ParseMode: "HTML",
