@@ -26,6 +26,7 @@ import (
 
 	"KanhaMusic/config"
 	"KanhaMusic/kanha/core"
+	"KanhaMusic/kanha/logger"
 )
 
 var helpTexts = map[string]string{}
@@ -118,6 +119,7 @@ func editHelpMessage(c *td.Client, cb *td.UpdateNewCallbackQuery, msg *td.Messag
 		if err == nil {
 			return nil
 		}
+		logger.Warnf("help: rich edit failed for chat %d, sent plain text: %v", cb.ChatId, err)
 	}
 
 	_, err := cb.EditMessageText(c, text, &td.EditTextMessageOpts{
