@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"html"
 	"strings"
+	"unicode/utf16"
 
 	td "github.com/Kanha/Meow"
 
@@ -143,9 +144,19 @@ func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 	}
 
 	if isPhotoMessage(msg) {
-		_, err = cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
-			ReplyMarkup: btn,
-		})
+		// Telegram captions are capped at 1024 UTF-16 units; longer help pages
+		// are sent as a plain text message instead of being edited into the photo.
+		if len(utf16.Encode([]rune(text))) <= 1024 {
+			_, err = cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
+				ReplyMarkup: btn,
+			})
+		} else {
+			_ = msg.Delete(c, true)
+			_, err = c.SendTextMessage(chatID, text, &td.SendTextMessageOpts{
+				ParseMode:   "HTML",
+				ReplyMarkup: btn,
+			})
+		}
 	} else {
 		_, err = cb.EditMessageText(c, text, &td.EditTextMessageOpts{
 			ReplyMarkup: btn,
