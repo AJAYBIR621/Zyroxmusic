@@ -25,12 +25,17 @@ import (
 	td "github.com/Kanha/Meow"
 
 	"KanhaMusic/config"
+	"KanhaMusic/kanha/core"
 	"KanhaMusic/kanha/database"
 	"KanhaMusic/kanha/locales"
 	"KanhaMusic/kanha/utils"
 )
 
 func langHandler(c *td.Client, m *td.Message) error {
+	if m.IsPrivate() {
+		database.AddServedUser(m.ChatID())
+		return showLangMenu(c, m)
+	}
 	if !isSuperGroup(c, m) || !filterAuthUsers(c, m) {
 		return nil
 	}
@@ -63,10 +68,7 @@ func buildLangMarkup(chatID int64, lang string, isCallback bool) *td.ReplyMarkup
 		if l == lang {
 			name = "✔️ " + name
 		}
-		row = append(row, td.InlineKeyboardButton{
-			Text: name,
-			Type: &td.InlineKeyboardButtonTypeCallback{Data: []byte("lang:" + l)},
-		})
+		row = append(row, core.DataBtn(name, "lang:"+l))
 		if len(row) == 2 {
 			rows = append(rows, row)
 			row = nil
@@ -78,10 +80,7 @@ func buildLangMarkup(chatID int64, lang string, isCallback bool) *td.ReplyMarkup
 
 	if isCallback {
 		rows = append(rows, []td.InlineKeyboardButton{
-			{
-				Text: F(chatID, "BACK_BTN"),
-				Type: &td.InlineKeyboardButtonTypeCallback{Data: []byte(langBackData(chatID))},
-			},
+			core.DataBtn(F(chatID, "BACK_BTN"), langBackData(chatID)),
 		})
 	}
 
