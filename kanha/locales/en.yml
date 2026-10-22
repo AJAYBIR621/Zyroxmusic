@@ -397,7 +397,7 @@ bug_report_format: |
 
 help_private_only: "{emoji:🤖} ʜɪ! ғσʀ ʙσᴛ ʜєʟᴘ ᴧηᴅ ᴄσᴍᴍᴧηᴅs, ᴘʟєᴧsє ᴅᴍ ᴍє ᴅɪʀєᴄᴛʟʏ — ɪ'ᴍ ᴍσʀє ʀєsᴘσηsɪᴠє ɪη ᴘʀɪᴠᴧᴛє ᴄʜᴧᴛs!"
 
-help_main: "<blockquote><b>🔮 єxᴘʟσʀє ᴛʜє ᴄσᴍᴘʟєᴛє ᴄσᴍᴍᴧηᴅ ɪηᴅєx ʙєʟσᴡ</b></blockquote>\n<blockquote><b>• ᴧᴄᴄєss єxᴘєʀᴛ ᴛєᴄʜηɪᴄᴧʟ ɢᴜɪᴅᴧηᴄє &amp; ʀєᴧʟ-ᴛɪᴍє sᴜᴘᴘσʀᴛ</b></blockquote>\n<blockquote><b>• єxєᴄᴜᴛє ᴧʟʟ ᴄσᴍᴍᴧηᴅs ᴜsɪηɢ sᴛᴧηᴅᴧʀᴅ ᴘʀєғɪx ➜</b></blockquote>"
+help_main: "<blockquote><b>🔮 єxᴘʟσʀє ᴛʜє ᴄσᴍᴘʟєᴛє ᴄσᴍᴍᴧηᴅ ɪηᴅєx ʙєʟσᴡ</b>\n<b>• ᴧᴄᴄєss єxᴘєʀᴛ ᴛєᴄʜηɪᴄᴧʟ ɢᴜɪᴅᴧηᴄє &amp; ʀєᴧʟ-ᴛɪᴍє sᴜᴘᴘσʀᴛ</b>\n<b>• єxєᴄᴜᴛє ᴧʟʟ ᴄσᴍᴍᴧηᴅs ᴜsɪηɢ sᴛᴧηᴅᴧʀᴅ ᴘʀєғɪx ➜</b></blockquote>"
 
 jump_no_active: "{emoji:⚠️} ησ ᴧᴄᴛɪᴠє ᴛʀᴧᴄᴋ ᴛσ ᴊᴜᴍᴘ ᴡɪᴛʜɪη."
 
@@ -486,25 +486,25 @@ logger_update_fail: "{emoji:❌} ғᴧɪʟєᴅ ᴛσ ᴜᴘᴅᴧᴛє ʟσɢɢ
 
 logger_updated: "{emoji:✅} ʟσɢɢєʀ ʜᴧs ʙєєη {action} sᴜᴄᴄєssғᴜʟʟʏ."
 
-vclog_join_count: "\n🔁 ᴊᴏɪɴ ᴄᴏᴜɴᴛ ➛ <code>{count}</code>"
+vclog_join_count: "\n🔁 ᴊσɪη ᴄσᴜηᴛ ➛ <code>{count}</code>"
 
-vclog_join: "<b>🟢 #ᴊᴏɪɴᴠɪᴅᴇᴏᴄʜᴀᴛ</b>\n<blockquote><b>ɴᴀᴍᴇ ➛ <a href=\"tg://user?id={user_id}\">{name}</a>\nɪᴅ ➛ <code>{user_id}</code>\nᴜsᴇʀɴᴀᴍᴇ ➛ {username}\n👥 ᴛᴏᴛᴀʟ ᴠᴄ ➛ <code>{total}</code></b></blockquote>"
-vclog_leave: "<b>🔴 #ʟᴇғᴛᴠɪᴅᴇᴏᴄʜᴀᴛ</b>\n<blockquote><b>ɴᴀᴍᴇ ➛ <a href=\"tg://user?id={user_id}\">{name}</a>\nɪᴅ ➛ <code>{user_id}</code>\nᴜsᴇʀɴᴀᴍᴇ ➛ {username}\n👥 ᴛᴏᴛᴀʟ ᴠᴄ ➛ <code>{total}</code></b></blockquote>"
-vclog_anon_usage: "⚠️ ᴀɴᴏɴʏᴍᴏᴜs ᴀᴅᴍɪɴ\n\nᴜsᴇ: <code>/vclogger on</code> ᴏʀ <code>/vclogger off</code>"
-vclog_already_active: "ℹ️ <b>ᴠᴄ ʟᴏɢɢᴇʀ ɪs ᴀʟʀᴇᴀᴅʏ ᴀᴄᴛɪᴠᴇ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ.</b>"
-vclog_enabled: "✅ <b>ᴠᴄ ʟᴏɢɢᴇʀ ʜᴀs ʙᴇᴇɴ ᴇɴᴀʙʟᴇᴅ!</b>"
-vclog_disabled: "🚫 <b>ᴠᴄ ʟᴏɢɢᴇʀ ʜᴀs ʙᴇᴇɴ ᴅɪsᴀʙʟᴇᴅ!</b>"
-vclog_no_permission: "❌ <b>ᴘᴇʀᴍɪssɪᴏɴ ᴅᴇɴɪᴇᴅ!</b>\n\n👮 <b>ᴏɴʟʏ ᴀᴅᴍɪɴs ᴏʀ ᴏᴡɴᴇʀs ᴄᴀɴ ᴜsᴇ ᴠᴄ ʟᴏɢɢᴇʀ.</b>"
-vclog_invalid_arg: "❌ <b>ɪɴᴠᴀʟɪᴅ ᴀʀɢᴜᴍᴇɴᴛ</b>\n\n➜ <b>ᴜsᴀɢᴇ :</b> <code>/vclogger [on / off]</code>"
-vclog_status: "🎙 <b>ᴠᴄ ʟᴏɢɢᴇʀ sᴛᴀᴛᴜs</b>\n\n➜ <b>ᴄᴜʀʀᴇɴᴛ sᴛᴀᴛᴇ :</b> {state}\n\n➜ <b>ᴜsᴀɢᴇ :</b> <code>/vclogger [on / off]</code>"
-vclog_stats: "📊 <b>ᴠᴄ ʟᴏɢɢᴇʀ sᴛᴀᴛs</b>\n\n➜ <b>ʟᴏɢɢᴇʀ  :</b> {enabled}\n➜ <b>ᴍᴏɴɪᴛᴏʀ :</b> {running}\n➜ <b>ᴜsᴇʀs ɪɴ ᴠᴄ :</b> <code>{count}</code>"
-vclog_admin_only: "❌ <b>ᴀᴅᴍɪɴ ᴏɴʟʏ!</b>"
-vclog_state_enabled: "ᴇɴᴀʙʟᴇᴅ ✅"
-vclog_state_disabled: "ᴅɪsᴀʙʟᴇᴅ ❌"
-vclog_enabled_short: "✅ ᴇɴᴀʙʟᴇᴅ"
-vclog_disabled_short: "❌ ᴅɪsᴀʙʟᴇᴅ"
-vclog_running: "🟢 ʀᴜɴɴɪɴɢ"
-vclog_stopped: "🔴 sᴛᴏᴘᴘᴇᴅ"
+vclog_join: "<b>🟢 #ᴊσɪηᴠɪᴅєσᴄʜᴧᴛ</b>\n<blockquote><b>ηᴧᴍє ➛ <a href=\"tg://user?id={user_id}\">{name}</a>\nɪᴅ ➛ <code>{user_id}</code>\nᴜsєʀηᴧᴍє ➛ {username}\n👥 ᴛσᴛᴧʟ ᴠᴄ ➛ <code>{total}</code></b></blockquote>"
+vclog_leave: "<b>🔴 #ʟєғᴛᴠɪᴅєσᴄʜᴧᴛ</b>\n<blockquote><b>ηᴧᴍє ➛ <a href=\"tg://user?id={user_id}\">{name}</a>\nɪᴅ ➛ <code>{user_id}</code>\nᴜsєʀηᴧᴍє ➛ {username}\n👥 ᴛσᴛᴧʟ ᴠᴄ ➛ <code>{total}</code></b></blockquote>"
+vclog_anon_usage: "⚠️ ᴧησηʏᴍσᴜs ᴧᴅᴍɪη\n\nᴜsє: <code>/vclogger on</code> σʀ <code>/vclogger off</code>"
+vclog_already_active: "ℹ️ <b>ᴠᴄ ʟσɢɢєʀ ɪs ᴧʟʀєᴧᴅʏ ᴧᴄᴛɪᴠє ɪη ᴛʜɪs ɢʀσᴜᴘ.</b>"
+vclog_enabled: "✅ <b>ᴠᴄ ʟσɢɢєʀ ʜᴧs ʙєєη єηᴧʙʟєᴅ!</b>"
+vclog_disabled: "🚫 <b>ᴠᴄ ʟσɢɢєʀ ʜᴧs ʙєєη ᴅɪsᴧʙʟєᴅ!</b>"
+vclog_no_permission: "❌ <b>ᴘєʀᴍɪssɪση ᴅєηɪєᴅ!</b>\n\n👮 <b>σηʟʏ ᴧᴅᴍɪηs σʀ σᴡηєʀs ᴄᴧη ᴜsє ᴠᴄ ʟσɢɢєʀ.</b>"
+vclog_invalid_arg: "❌ <b>ɪηᴠᴧʟɪᴅ ᴧʀɢᴜᴍєηᴛ</b>\n\n➜ <b>ᴜsᴧɢє :</b> <code>/vclogger [on / off]</code>"
+vclog_status: "🎙 <b>ᴠᴄ ʟσɢɢєʀ sᴛᴧᴛᴜs</b>\n\n➜ <b>ᴄᴜʀʀєηᴛ sᴛᴧᴛє :</b> {state}\n\n➜ <b>ᴜsᴧɢє :</b> <code>/vclogger [on / off]</code>"
+vclog_stats: "📊 <b>ᴠᴄ ʟσɢɢєʀ sᴛᴧᴛs</b>\n\n➜ <b>ʟσɢɢєʀ  :</b> {enabled}\n➜ <b>ᴍσηɪᴛσʀ :</b> {running}\n➜ <b>ᴜsєʀs ɪη ᴠᴄ :</b> <code>{count}</code>"
+vclog_admin_only: "❌ <b>ᴧᴅᴍɪη σηʟʏ!</b>"
+vclog_state_enabled: "єηᴧʙʟєᴅ ✅"
+vclog_state_disabled: "ᴅɪsᴧʙʟєᴅ ❌"
+vclog_enabled_short: "✅ єηᴧʙʟєᴅ"
+vclog_disabled_short: "❌ ᴅɪsᴧʙʟєᴅ"
+vclog_running: "🟢 ʀᴜηηɪηɢ"
+vclog_stopped: "🔴 sᴛσᴘᴘєᴅ"
 
 # Logs module
 logs_empty: "ησ ʟσɢs ғσᴜηᴅ"
