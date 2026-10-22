@@ -245,7 +245,7 @@ func getParticipantUserID(peer tg.Peer) int64 {
 
 func sendVCLog(chatID, userID int64, ass *core.Assistant, joined bool, total int) {
 	name := "Unknown"
-	username := "ɪɢɴᴏʀᴇᴅ"
+	username := "ɪɢησʀєᴅ"
 
 	if u, err := core.Bot.GetUser(userID); err == nil && u != nil {
 		name = utils.EscapeHTML(u.FirstName)
