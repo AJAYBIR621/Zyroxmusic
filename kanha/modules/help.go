@@ -41,6 +41,29 @@ func init() {
 For more info, visit our <a href="%s">Support Chat</a>.`, config.SupportChat)
 }
 
+func richHelp(text string) *td.InputRichMessage {
+	return &td.InputRichMessage{Source: &td.RichMessageSourceHtml{Text: text}}
+}
+
+func editHelpMessage(c *td.Client, cb *td.UpdateNewCallbackQuery, msg *td.Message, text string, markup td.ReplyMarkup) error {
+	if isPhotoMessage(msg) {
+		_, err := cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
+			ReplyMarkup: markup,
+		})
+		return err
+	}
+
+	_, err := c.EditMessageText(cb.ChatId, &td.InputMessageRichMessage{Message: richHelp(text)}, cb.MessageId, &td.EditMessageTextOpts{
+		ReplyMarkup: markup,
+	})
+	if err != nil {
+		_, err = cb.EditMessageText(c, text, &td.EditTextMessageOpts{
+			ReplyMarkup: markup,
+		})
+	}
+	return err
+}
+
 func helpHandler(c *td.Client, m *td.Message) error {
 	if isChannel(c, m) {
 		return nil
@@ -64,7 +87,7 @@ func helpHandler(c *td.Client, m *td.Message) error {
 		return err
 	}
 
-	_, err := m.ReplyText(c, F(m.ChatID(), "help_main"), &td.SendTextMessageOpts{
+	_, err := m.ReplyRichMessage(c, richHelp(F(m.ChatID(), "help_main")), &td.SendTextMessageOpts{
 		ReplyMarkup: core.GetHelpKeyboard(m.ChatID()),
 	})
 	return err
@@ -78,18 +101,7 @@ func helpCB(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return err
 	}
 
-	markup := core.GetHelpKeyboard(cb.ChatId)
-
-	if isPhotoMessage(msg) {
-		_, err = cb.EditMessageCaption(c, F(cb.ChatId, "help_main"), &td.EditCaptionOpts{
-			ReplyMarkup: markup,
-		})
-	} else {
-		_, err = cb.EditMessageText(c, F(cb.ChatId, "help_main"), &td.EditTextMessageOpts{
-			ReplyMarkup: markup,
-		})
-	}
-	return err
+	return editHelpMessage(c, cb, msg, F(cb.ChatId, "help_main"), core.GetHelpKeyboard(cb.ChatId))
 }
 
 func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
@@ -142,16 +154,7 @@ func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return err
 	}
 
-	if isPhotoMessage(msg) {
-		_, err = cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
-			ReplyMarkup: btn,
-		})
-	} else {
-		_, err = cb.EditMessageText(c, text, &td.EditTextMessageOpts{
-			ReplyMarkup: btn,
-		})
-	}
-	return err
+	return editHelpMessage(c, cb, msg, text, btn)
 }
 
 func showHelpFor(c *td.Client, m *td.Message, cmd string) error {
