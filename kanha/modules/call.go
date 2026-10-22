@@ -260,11 +260,6 @@ func pickAutoplayCandidate(chatID int64, cur *state.Track) *state.Track {
 		return nil
 	}
 
-	if len(candidates) == 0 {
-		logger.Warnf("[Autoplay] No candidates could be found for chat %d", chatID)
-		return nil
-	}
-
 	maxPool := len(candidates)
 	if maxPool > 4 {
 		maxPool = 4
