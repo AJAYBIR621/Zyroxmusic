@@ -75,7 +75,7 @@ func shouldShowThumb(chatID int64) bool {
 func nowPlayingText(chatID int64, t *state.Track) string {
 	return F(chatID, "stream_now_playing", locales.Arg{
 		"url":      t.URL,
-		"title":    utils.EscapeHTML(utils.ShortTitle(t.Title, 25)),
+		"title":    utils.EscapeHTML(utils.ShortTitle(t.Title, 45)),
 		"duration": utils.FormatDuration(t.Duration),
 		"by":       t.Requester,
 	})
@@ -112,26 +112,6 @@ func showTrackMessage(
 	}
 
 	if t.Artwork != "" && shouldShowThumb(chatID) {
-		content := &td.InputMessagePhoto{
-			Photo: &td.InputPhoto{
-				Photo: td.InputFileRemote{Id: utils.CleanURL(t.Artwork)},
-			},
-		}
-		if statusMsg != nil {
-			if caption, err := c.GetFormattedText(msgText, nil, "HTML"); err == nil {
-				content.Caption = caption
-				m, err := c.EditMessageMedia(
-					chatID,
-					content,
-					statusMsg.Id,
-					&td.EditMessageMediaOpts{ReplyMarkup: markup},
-				)
-				if err == nil {
-					return m
-				}
-				logger.Errorf("EditMessageMedia (track message) failed: %v", err)
-			}
-		}
 		if statusMsg != nil {
 			_ = statusMsg.Delete(c, true)
 		}
