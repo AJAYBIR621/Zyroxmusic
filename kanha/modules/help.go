@@ -26,7 +26,6 @@ import (
 
 	"KanhaMusic/config"
 	"KanhaMusic/kanha/core"
-	"KanhaMusic/kanha/logger"
 )
 
 var helpTexts = map[string]string{}
@@ -40,101 +39,6 @@ func init() {
 <code>/help &lt;command&gt;</code> — Show help for a specific command.
 
 For more info, visit our <a href="%s">Support Chat</a>.`, config.SupportChat)
-}
-
-var (
-	helpBlockquoteStripper = strings.NewReplacer("<blockquote>", "", "</blockquote>", "")
-	helpTagStripper        = strings.NewReplacer("<b>", "", "</b>", "", "<u>", "", "</u>", "")
-)
-
-func richHelp(text string) *td.InputRichMessage {
-	var b strings.Builder
-	detailsOpen, tableOpen := false, false
-
-	closeTable := func() {
-		if tableOpen {
-			b.WriteString("</table>")
-			tableOpen = false
-		}
-	}
-	closeAll := func() {
-		closeTable()
-		if detailsOpen {
-			b.WriteString("</details>")
-			detailsOpen = false
-		}
-	}
-
-	for _, raw := range strings.Split(text, "\n") {
-		line := strings.TrimSpace(helpBlockquoteStripper.Replace(raw))
-		if line == "" {
-			continue
-		}
-
-		switch {
-		case strings.HasPrefix(line, "⊚"):
-			closeAll()
-			title := strings.TrimSpace(helpTagStripper.Replace(strings.TrimPrefix(line, "⊚")))
-			title = strings.TrimSpace(strings.TrimSuffix(title, ":"))
-			b.WriteString("<details open><summary>" + title + "</summary>")
-			detailsOpen = true
-
-		case strings.HasPrefix(line, "➻"):
-			row := strings.TrimSpace(strings.TrimPrefix(line, "➻"))
-			cmd, desc, _ := strings.Cut(row, " :")
-			cmd = strings.TrimSpace(helpTagStripper.Replace(cmd))
-			desc = strings.TrimSpace(desc)
-			if !tableOpen {
-				b.WriteString("<table bordered striped><tr><th>Command</th><th>Description</th></tr>")
-				tableOpen = true
-			}
-			if desc == "" {
-				b.WriteString("<tr><td><b>" + cmd + "</b></td><td></td></tr>")
-			} else {
-				b.WriteString("<tr><td><code>" + cmd + "</code></td><td>" + desc + "</td></tr>")
-			}
-
-		default:
-			closeTable()
-			b.WriteString("<p>" + line + "</p>")
-		}
-	}
-	closeAll()
-
-	return &td.InputRichMessage{Source: &td.RichMessageSourceHtml{Text: b.String()}}
-}
-
-func editHelpMessage(c *td.Client, cb *td.UpdateNewCallbackQuery, msg *td.Message, text string, markup td.ReplyMarkup, rich bool) error {
-	if !rich {
-		if isPhotoMessage(msg) {
-			_, err := cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
-				ReplyMarkup: markup,
-			})
-			return err
-		}
-		_, err := cb.EditMessageText(c, text, &td.EditTextMessageOpts{
-			ReplyMarkup: markup,
-		})
-		return err
-	}
-
-	if !isPhotoMessage(msg) {
-		_, err := c.EditMessageText(cb.ChatId, &td.InputMessageRichMessage{Message: richHelp(text)}, cb.MessageId, &td.EditMessageTextOpts{
-			ReplyMarkup: markup,
-		})
-		if err == nil {
-			return nil
-		}
-		logger.Warnf("help: rich edit failed for chat %d, sending new rich message: %v", cb.ChatId, err)
-	}
-
-	if _, err := c.SendRichMessage(cb.ChatId, richHelp(text), &td.SendTextMessageOpts{
-		ReplyMarkup: markup,
-	}); err != nil {
-		return err
-	}
-	_ = c.DeleteMessages(cb.ChatId, []int64{cb.MessageId}, nil)
-	return nil
 }
 
 func helpHandler(c *td.Client, m *td.Message) error {
@@ -160,7 +64,7 @@ func helpHandler(c *td.Client, m *td.Message) error {
 		return err
 	}
 
-	_, err := m.ReplyRichMessage(c, richHelp(F(m.ChatID(), "help_main")), &td.SendTextMessageOpts{
+	_, err := m.ReplyText(c, F(m.ChatID(), "help_main"), &td.SendTextMessageOpts{
 		ReplyMarkup: core.GetHelpKeyboard(m.ChatID()),
 	})
 	return err
@@ -174,7 +78,18 @@ func helpCB(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return err
 	}
 
-	return editHelpMessage(c, cb, msg, F(cb.ChatId, "help_main"), core.GetHelpKeyboard(cb.ChatId), true)
+	markup := core.GetHelpKeyboard(cb.ChatId)
+
+	if isPhotoMessage(msg) {
+		_, err = cb.EditMessageCaption(c, F(cb.ChatId, "help_main"), &td.EditCaptionOpts{
+			ReplyMarkup: markup,
+		})
+	} else {
+		_, err = cb.EditMessageText(c, F(cb.ChatId, "help_main"), &td.EditTextMessageOpts{
+			ReplyMarkup: markup,
+		})
+	}
+	return err
 }
 
 func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
@@ -227,7 +142,16 @@ func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return err
 	}
 
-	return editHelpMessage(c, cb, msg, text, btn, true)
+	if isPhotoMessage(msg) {
+		_, err = cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
+			ReplyMarkup: btn,
+		})
+	} else {
+		_, err = cb.EditMessageText(c, text, &td.EditTextMessageOpts{
+			ReplyMarkup: btn,
+		})
+	}
+	return err
 }
 
 func showHelpFor(c *td.Client, m *td.Message, cmd string) error {
