@@ -119,37 +119,45 @@ type broadcastTarget struct {
 func init() {
 	helpTexts["broadcast"] = `<i>Broadcast a message to all served chats and users.</i>
 
+<u>Commands:</u> <code>/broadcast</code>, <code>/bcast</code>, <code>/gcast</code> (all work the same)
+
 <u>Usage:</u>
-<b>/broadcast [flags] [text] </b> — Broadcast text message.
-<b>/broadcast [flags] [reply to message]</b> — Broadcast the replied message.
-<b>/broadcast -cancel</b> — Cancel ongoing broadcast.
+<b>/broadcast [flags] [text]</b> — Broadcast a text message.
+<b>/broadcast [flags]</b> (reply to a message) — Broadcast the replied message (photo, video, forward, etc.).
+<b>/broadcast -cancel</b> — Cancel the ongoing broadcast.
 
 <blockquote>
-<b>📋 Flags:</b>
-• <code>-user</code> — Send only to users (DM)
-• <code>-group</code> — Send only to groups
-• <code>-all</code> — Send to both users and groups (default)
-• <code>--nochat</code> — Exclude groups from broadcast
-• <code>--nouser</code> — Exclude users from broadcast
-• <code>--copy</code> — Remove forwarded tag, when broadcasting a replied message (copy mode)
-• <code>--limit [n]</code> — Limit total messages sent (default: 0 = no limit)
-• <code>--delay [seconds]</code> — Delay between messages (default: 1.5s)
-• <code>--pin</code> — Pin the message (silent)
-• <code>--pinloud</code> — Pin the message (with notification)
-
-• <code>-cancel</code> - Cancel a ongoing broadcast.
+<b>🎯 Who gets it:</b>
+• <code>-user</code> — Only users (DM)
+• <code>-group</code> — Only groups
+• <code>-all</code> — Users and groups (default)
+• <code>-nochat</code> — Exclude groups
+• <code>-nouser</code> — Exclude users
+</blockquote>
+<blockquote>
+<b>📋 Options:</b>
+• <code>-copy</code> — Send without the forwarded tag (reply mode; used automatically if the message cannot be forwarded)
+• <code>-pin</code> — Pin the message (silent)
+• <code>-pinloud</code> — Pin the message (with notification)
+• <code>-limit [n]</code> — Stop after n targets, groups first (default: 0 = no limit)
+• <code>-delay [seconds]</code> — Delay between messages (default: 0.7s)
+• <code>-cancel</code> — Cancel the ongoing broadcast
 </blockquote>
 <blockquote>
 <b>📌 Examples:</b>
+/broadcast -user Hello everyone
+/bcast -group -pin [reply to message]
+/gcast -all -copy -limit 50 [reply to message]
 /broadcast -user -delay 2 Important announcement
-/broadcast -group -pin [reply to message]
-/broadcast -copy -nochat -pin [reply to message]
-/broadcast -limit 10 -delay 3 Limited broadcast
+/broadcast -cancel
 </blockquote>
 <b>⚠️ Notes:</b>
 • Only the <b>owner</b> can use this command
+• Flags work with one or two dashes (<code>-copy</code> or <code>--copy</code>)
+• Text mode sends plain text. For media or formatting, reply to the message
 • After every 30 messages, there's an automatic 7.5s pause
-• You can cancel ongoing broadcasts using the inline button or <code>/broadcast -cancel</code>
+• Blocked or deleted users fail; the final report shows the reasons
+• You can cancel using the inline button or <code>/broadcast -cancel</code>
 • Only one broadcast can run at a time`
 
 	helpTexts["gcast"] = helpTexts["broadcast"]
