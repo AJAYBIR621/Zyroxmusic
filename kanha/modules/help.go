@@ -41,27 +41,65 @@ func init() {
 For more info, visit our <a href="%s">Support Chat</a>.`, config.SupportChat)
 }
 
+var (
+	helpBlockquoteStripper = strings.NewReplacer("<blockquote>", "", "</blockquote>", "")
+	helpTagStripper        = strings.NewReplacer("<b>", "", "</b>", "", "<u>", "", "</u>", "")
+)
+
 func richHelp(text string) *td.InputRichMessage {
 	var b strings.Builder
-	for _, line := range strings.Split(text, "\n") {
-		line = strings.TrimSpace(line)
+	detailsOpen, tableOpen := false, false
+
+	closeTable := func() {
+		if tableOpen {
+			b.WriteString("</table>")
+			tableOpen = false
+		}
+	}
+	closeAll := func() {
+		closeTable()
+		if detailsOpen {
+			b.WriteString("</details>")
+			detailsOpen = false
+		}
+	}
+
+	for _, raw := range strings.Split(text, "\n") {
+		line := strings.TrimSpace(helpBlockquoteStripper.Replace(raw))
 		if line == "" {
 			continue
 		}
-		open, closing := "", ""
-		if strings.HasPrefix(line, "<blockquote>") {
-			open = "<blockquote>"
-			line = strings.TrimPrefix(line, open)
+
+		switch {
+		case strings.HasPrefix(line, "⊚"):
+			closeAll()
+			title := strings.TrimSpace(helpTagStripper.Replace(strings.TrimPrefix(line, "⊚")))
+			title = strings.TrimSpace(strings.TrimSuffix(title, ":"))
+			b.WriteString("<details open><summary>" + title + "</summary>")
+			detailsOpen = true
+
+		case strings.HasPrefix(line, "➻"):
+			row := strings.TrimSpace(strings.TrimPrefix(line, "➻"))
+			cmd, desc, _ := strings.Cut(row, " :")
+			cmd = strings.TrimSpace(helpTagStripper.Replace(cmd))
+			desc = strings.TrimSpace(desc)
+			if !tableOpen {
+				b.WriteString("<table bordered striped><tr><th>Command</th><th>Description</th></tr>")
+				tableOpen = true
+			}
+			if desc == "" {
+				b.WriteString("<tr><td><b>" + cmd + "</b></td><td></td></tr>")
+			} else {
+				b.WriteString("<tr><td><code>" + cmd + "</code></td><td>" + desc + "</td></tr>")
+			}
+
+		default:
+			closeTable()
+			b.WriteString("<p>" + line + "</p>")
 		}
-		if strings.HasSuffix(line, "</blockquote>") {
-			closing = "</blockquote>"
-			line = strings.TrimSuffix(line, closing)
-		}
-		if line != "" {
-			line = "<p>" + line + "</p>"
-		}
-		b.WriteString(open + line + closing)
 	}
+	closeAll()
+
 	return &td.InputRichMessage{Source: &td.RichMessageSourceHtml{Text: b.String()}}
 }
 
