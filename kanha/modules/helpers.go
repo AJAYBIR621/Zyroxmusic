@@ -49,11 +49,11 @@ func getEffectiveRoom(chatID int64, cplay bool) (*core.RoomState, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get assistant for your chat: %w", err)
 	}
+	// The room is shared with every other command that uses this chat (and,
+	// for cplay, with the linked channel's own /play), so its ChatID must not
+	// be rewritten here. origChatID is kept only for the caller's context.
+	_ = origChatID
 	r := core.CreateRoom(chatID, ass)
-
-	if cplay {
-		r.ChatID = origChatID
-	}
 	return r, nil
 }
 
@@ -68,9 +68,6 @@ func shouldShowThumb(chatID int64) bool {
 	return !noThumb
 }
 
-// sendNowPlaying sends or edits the "now playing" playback message for the
-// given track, honoring the thumbnail/artwork setting, and returns the
-// resulting message.
 // nowPlayingText builds the "now playing" status text for a track.
 func nowPlayingText(chatID int64, t *state.Track) string {
 	return F(chatID, "stream_now_playing", locales.Arg{
@@ -81,6 +78,9 @@ func nowPlayingText(chatID int64, t *state.Track) string {
 	})
 }
 
+// sendNowPlaying sends or edits the "now playing" playback message for the
+// given track, honoring the thumbnail/artwork setting, and returns the
+// resulting message.
 func sendNowPlaying(
 	c *td.Client,
 	statusMsg *td.Message,
@@ -153,14 +153,20 @@ func showTrackMessage(
 	}
 
 	if statusMsg != nil {
-		m, _ := utils.EOR(c, statusMsg, msgText, &td.EditTextMessageOpts{
+		m, err := utils.EOR(c, statusMsg, msgText, &td.EditTextMessageOpts{
 			ParseMode:             "HTML",
 			ReplyMarkup:           markup,
 			DisableWebPagePreview: true,
 		})
-		return m
+		if err == nil && m != nil {
+			return m
+		}
+		logger.Errorf("edit track message failed, sending a new one: %v", err)
 	}
-	m, _ := c.SendTextMessage(chatID, msgText, opts)
+	m, err := c.SendTextMessage(chatID, msgText, opts)
+	if err != nil {
+		logger.Errorf("SendTextMessage (track message) failed: %v", err)
+	}
 	return m
 }
 
