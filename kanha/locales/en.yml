@@ -675,14 +675,15 @@ playmode_restricted: "{emoji:🚫} ᴘʟᴧʏ ᴍσᴅє ɪs єηᴧʙʟєᴅ. �
 ping_start: "{emoji:🏓} ᴘɪηɢɪηɢ..."
 
 ping_result: |
-  <b>{emoji:🏓} ᴘσηɢ</b>: <code>{latency}ms</code>
-  
-  <b><u>{emoji:🤖} {bot} sʏsᴛєᴍ sᴛᴧᴛ's :</u></b>
-  
-  <b>ᴜᴘᴛɪᴍє:</b> {uptime}
-  <b>ʀᴧᴍ ᴜsᴧɢє:</b> {ram_info}
-  <b>ᴄᴘᴜ ᴜsᴧɢє:</b> {cpu_usage}
-  <b>ᴅɪsᴋ ᴜsᴧɢє:</b> {disk_usage}
+  ● <b>ᴘσηɢ:</b> <code>{latency}ms</code>
+
+  ● <b><u>{bot} sʏsᴛєᴍ sᴛᴧᴛ's :</u></b>
+
+  ● <b>ᴜᴘᴛɪᴍє:</b> {uptime}
+  ● <b>ʀᴧᴍ ᴜsᴧɢє:</b> {ram_info}
+  ● <b>ᴄᴘᴜ ᴜsᴧɢє:</b> {cpu_usage}
+  ● <b>ᴅɪsᴋ ᴜsᴧɢє:</b> {disk_usage}
+  ● <b>ʟɪʙʀᴧʀʏ :</b> ɢσ-ɢʀᴧᴍ
 
 position_now: |
   {emoji:🎵} <b>{title}</b>
