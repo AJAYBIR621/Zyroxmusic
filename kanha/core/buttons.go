@@ -29,9 +29,8 @@ import (
 	"KanhaMusic/kanha/utils"
 )
 
-var F func(chatID int64, key string, values ...locales.Arg) string // overwritten from main.go
+var F func(chatID int64, key string, values ...locales.Arg) string
 
-// Bot is the Meow client, set from main.go.
 var Bot *td.Client
 
 func botUsername() string {
@@ -45,8 +44,6 @@ func botUsername() string {
 	return usernames[0]
 }
 
-// ── button colours ────────────────────────────────────────────────────────────
-
 const (
 	ColourRed   = "red"
 	ColourBlue  = "blue"
@@ -55,7 +52,6 @@ const (
 
 var buttonColours = []string{ColourRed, ColourBlue, ColourGreen}
 
-// randomColour returns a random button colour from red/blue/green.
 func randomColour() string {
 	return buttonColours[rand.Intn(len(buttonColours))]
 }
@@ -74,7 +70,6 @@ func dataBtn(text, cb string) td.InlineKeyboardButton {
 	}
 }
 
-// styleBtn builds a callback ("Data") button with an explicit colour.
 func styleBtn(text, cb, colour string) td.InlineKeyboardButton {
 	b := dataBtn(text, cb)
 
@@ -94,7 +89,6 @@ func styleBtn(text, cb, colour string) td.InlineKeyboardButton {
 	return b
 }
 
-// styleURLBtn builds a URL button with an explicit colour.
 func styleURLBtn(text, url, colour string) td.InlineKeyboardButton {
 	b := urlBtn(text, url)
 
@@ -114,15 +108,10 @@ func styleURLBtn(text, url, colour string) td.InlineKeyboardButton {
 	return b
 }
 
-// DataBtn is a callback button with a random colour — used wherever a
-// button's colour doesn't need to carry meaning (i.e. everywhere below).
-// Exported so other packages (e.g. modules) can use it for one-off
-// buttons built outside buttons.go.
 func DataBtn(text, cb string) td.InlineKeyboardButton {
 	return styleBtn(text, cb, randomColour())
 }
 
-// UrlBtn is a URL button with a random colour.
 func UrlBtn(text, url string) td.InlineKeyboardButton {
 	return styleURLBtn(text, url, randomColour())
 }
@@ -274,6 +263,7 @@ func GetStartMarkup(chatID int64) td.ReplyMarkup {
 				UrlBtn(F(chatID, "SUPPORT_BTN"), config.SupportChat),
 			},
 			{
+				DataBtn(F(chatID, "LANG_BTN"), "lang:select"),
 				UrlBtn(F(chatID, "SOURCE_BTN"), "https://github.com/Oyekanhaa/KanhaMusic"),
 			},
 		},
