@@ -19,6 +19,7 @@ package modules
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"KanhaMusic/kanha/logger"
@@ -148,7 +149,14 @@ func getLinkedChannelID(c *td.Client, chatID int64) (int64, error) {
 }
 
 func resolveChannelPlay(c *td.Client, chatID int64, target string) (int64, error) {
-	chat, err := c.SearchPublicChat(target)
+	var chat *td.Chat
+	var err error
+
+	if id, perr := strconv.ParseInt(strings.TrimSpace(target), 10, 64); perr == nil {
+		chat, err = c.GetChat(id)
+	} else {
+		chat, err = c.SearchPublicChat(target)
+	}
 	if err != nil {
 		logger.Errorf("Failed to resolve cplay target %v for chat %d: %v", target, chatID, err)
 		return 0, errors.New(F(chatID, "cplay_channel_not_accessible"))
