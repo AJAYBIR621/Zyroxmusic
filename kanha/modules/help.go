@@ -105,27 +105,36 @@ func richHelp(text string) *td.InputRichMessage {
 }
 
 func editHelpMessage(c *td.Client, cb *td.UpdateNewCallbackQuery, msg *td.Message, text string, markup td.ReplyMarkup, rich bool) error {
-	if isPhotoMessage(msg) {
-		_, err := cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
+	if !rich {
+		if isPhotoMessage(msg) {
+			_, err := cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
+				ReplyMarkup: markup,
+			})
+			return err
+		}
+		_, err := cb.EditMessageText(c, text, &td.EditTextMessageOpts{
 			ReplyMarkup: markup,
 		})
 		return err
 	}
 
-	if rich {
+	if !isPhotoMessage(msg) {
 		_, err := c.EditMessageText(cb.ChatId, &td.InputMessageRichMessage{Message: richHelp(text)}, cb.MessageId, &td.EditMessageTextOpts{
 			ReplyMarkup: markup,
 		})
 		if err == nil {
 			return nil
 		}
-		logger.Warnf("help: rich edit failed for chat %d, sent plain text: %v", cb.ChatId, err)
+		logger.Warnf("help: rich edit failed for chat %d, sending new rich message: %v", cb.ChatId, err)
 	}
 
-	_, err := cb.EditMessageText(c, text, &td.EditTextMessageOpts{
+	if _, err := c.SendRichMessage(cb.ChatId, richHelp(text), &td.SendTextMessageOpts{
 		ReplyMarkup: markup,
-	})
-	return err
+	}); err != nil {
+		return err
+	}
+	_ = c.DeleteMessages(cb.ChatId, []int64{cb.MessageId}, nil)
+	return nil
 }
 
 func helpHandler(c *td.Client, m *td.Message) error {
@@ -151,7 +160,7 @@ func helpHandler(c *td.Client, m *td.Message) error {
 		return err
 	}
 
-	_, err := m.ReplyText(c, F(m.ChatID(), "help_main"), &td.SendTextMessageOpts{
+	_, err := m.ReplyRichMessage(c, richHelp(F(m.ChatID(), "help_main")), &td.SendTextMessageOpts{
 		ReplyMarkup: core.GetHelpKeyboard(m.ChatID()),
 	})
 	return err
@@ -165,7 +174,7 @@ func helpCB(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return err
 	}
 
-	return editHelpMessage(c, cb, msg, F(cb.ChatId, "help_main"), core.GetHelpKeyboard(cb.ChatId), false)
+	return editHelpMessage(c, cb, msg, F(cb.ChatId, "help_main"), core.GetHelpKeyboard(cb.ChatId), true)
 }
 
 func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
@@ -218,7 +227,7 @@ func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return err
 	}
 
-	return editHelpMessage(c, cb, msg, text, btn, parts[1] != "main")
+	return editHelpMessage(c, cb, msg, text, btn, true)
 }
 
 func showHelpFor(c *td.Client, m *td.Message, cmd string) error {
