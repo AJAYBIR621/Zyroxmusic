@@ -185,7 +185,7 @@ run_cmd_arr() {
     local desc="$1"
     shift
     log_info "Executing: $desc ($*)"
-    if "$@" >> "$INSTALL_LOG" 2>&1; then
+    if "$@" >> "$INSTALL_LOG" 2>&1 < /dev/null; then
         return 0
     else
         local exit_status=$?
@@ -759,9 +759,10 @@ install_ntgcalls() {
 
     [[ -z "$url" ]] && print_error "Could not determine ntgcalls URL" "check system compatibility"
 
+    rm -rf ntgcalls.zip tmp_ntg
     if download_file "$url" "ntgcalls.zip"; then
         mkdir -p tmp_ntg
-        if run_cmd_arr "Extracting ntgcalls" unzip -q ntgcalls.zip -d tmp_ntg; then
+        if run_cmd_arr "Extracting ntgcalls" unzip -qo ntgcalls.zip -d tmp_ntg; then
             mkdir -p ntgcalls
             cp tmp_ntg/include/ntgcalls.h ntgcalls/
             local lib_file
