@@ -86,9 +86,9 @@ func startCB(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 	if err != nil {
 		return err
 	}
-	sender, _ := msg.GetUser(c)
+	sender, _ := c.GetUser(cb.SenderUserId)
 
-	caption := startCaption(c, cb.ChatId, sender, msg.SenderID())
+	caption := startCaption(c, cb.ChatId, sender, cb.SenderUserId)
 	markup := core.GetStartMarkup(cb.ChatId)
 
 	if config.StartImage() == "" {
