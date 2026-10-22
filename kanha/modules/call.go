@@ -14,7 +14,6 @@
  *
  * Repository: https://github.com/Oyekanhaa/KanhaMusic
  */
-
 package modules
 
 import (
@@ -36,8 +35,7 @@ import (
 	"KanhaMusic/ntgcalls"
 )
 
-// ── In-Memory Fast Anti-Repeat Autoplay History ───────────────────────────────
-var autoplayHistory sync.Map // map[int64]*sync.Map (chatID -> videoID -> time.Time)
+var autoplayHistory sync.Map
 
 func getChatHistoryMap(chatID int64) *sync.Map {
 	val, ok := autoplayHistory.Load(chatID)
@@ -70,11 +68,6 @@ func apClearChat(chatID int64) {
 	autoplayHistory.Delete(chatID)
 }
 
-// callDiscardedHandler fires when Telegram tears down the group call itself
-// (voice chat ended/kicked/etc.), as opposed to our own stream just finishing.
-// The native ntgcalls call is already gone at this point, so the room's
-// "playing" state must be reconciled here — otherwise commands like /seek
-// keep trying to talk to a call that no longer exists.
 func callDiscardedHandler(chatID int64) {
 	r, ok := core.RoomFor(chatID)
 	if !ok {
@@ -156,7 +149,6 @@ func streamEndHandler(
 	if wasLooping && t != nil && r.FilePath() != "" {
 		filePath = r.FilePath()
 	} else {
-		// Download with smart retry in autoplay mode
 		const maxRetries = 5
 		const downloadTimeout = 60 * time.Second
 		for attempt := 0; attempt < maxRetries; attempt++ {
@@ -214,8 +206,6 @@ func streamEndHandler(
 	}
 }
 
-// ── Smart Autoplay Engine (Golden-Zone Relevance + Anti-Repeat Filter) ────────
-
 func tryAutoplay(chatID int64, r *core.RoomState) *state.Track {
 	if r == nil || !r.Autoplay() {
 		logger.Debugf("[Autoplay] Autoplay is disabled for chat %d", chatID)
@@ -230,12 +220,10 @@ func pickAutoplayCandidate(chatID int64, cur *state.Track) *state.Track {
 		return nil
 	}
 
-	// Mark current track as played in session
 	apMarkPlayed(chatID, cur.ID)
 
 	var candidates []*state.Track
 
-	// ── Tier 1: YouTube Official Radio Mix (with proper "RD" prefix) ───────────
 	mixPlaylistID := cur.ID
 	if !strings.HasPrefix(mixPlaylistID, "RD") {
 		mixPlaylistID = "RD" + cur.ID
@@ -244,7 +232,6 @@ func pickAutoplayCandidate(chatID int64, cur *state.Track) *state.Track {
 	mix, err := platforms.GetYouTubeMixPlaylist(context.Background(), mixPlaylistID)
 	if err == nil && len(mix) > 0 {
 		for i, t := range mix {
-			// Top 15 songs in Radio Mix are the highest-quality relevant matches (Golden Zone)
 			if i >= 15 {
 				break
 			}
@@ -254,7 +241,6 @@ func pickAutoplayCandidate(chatID int64, cur *state.Track) *state.Track {
 		}
 	}
 
-	// ── Tier 2: Smart Search Fallback (Exact Vibe / Artist Matching) ───────────
 	if len(candidates) == 0 {
 		cleanTitle := cleanSongTitleForSearch(cur.Title)
 		logger.Infof("[Autoplay] Radio mix empty for %s, falling back to smart search: %q", cur.Title, cleanTitle)
@@ -268,21 +254,10 @@ func pickAutoplayCandidate(chatID int64, cur *state.Track) *state.Track {
 		}
 	}
 
-	// ── Tier 3: History Reset (If all songs have been played, recycle cleanly) ──
 	if len(candidates) == 0 {
-		logger.Infof("[Autoplay] All candidates exhausted for chat %d, refreshing session history", chatID)
+		logger.Infof("[Autoplay] All candidates exhausted for chat %d, clearing history and stopping autoplay", chatID)
 		apClearChat(chatID)
-		apMarkPlayed(chatID, cur.ID)
-		if len(mix) > 1 {
-			for _, t := range mix {
-				if t.ID != "" && t.ID != cur.ID {
-					candidates = append(candidates, t)
-					if len(candidates) >= 5 {
-						break
-					}
-				}
-			}
-		}
+		return nil
 	}
 
 	if len(candidates) == 0 {
@@ -290,7 +265,6 @@ func pickAutoplayCandidate(chatID int64, cur *state.Track) *state.Track {
 		return nil
 	}
 
-	// ── Golden-Zone Selection: Pick strictly from Top 4 closest hit matches ────
 	maxPool := len(candidates)
 	if maxPool > 4 {
 		maxPool = 4
@@ -304,7 +278,6 @@ func pickAutoplayCandidate(chatID int64, cur *state.Track) *state.Track {
 		chosen = candidates[n.Int64()]
 	}
 
-	// Record chosen song so it never repeats
 	apMarkPlayed(chatID, chosen.ID)
 	chosen.Requester = "🎵 ᴀᴜᴛᴏᴘʟᴀʏ"
 	chosen.IsAutoplay = true
@@ -318,4 +291,3 @@ func cleanSongTitleForSearch(title string) string {
 	title = strings.Split(title, "[")[0]
 	return strings.TrimSpace(title)
 }
-
