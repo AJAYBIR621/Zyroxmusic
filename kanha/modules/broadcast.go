@@ -40,7 +40,6 @@ import (
 
 const defaultBroadcastDelay = 0.7
 
-// bManager guarantees only one broadcast runs at a time.
 var bManager broadcastManager
 
 type broadcastManager struct {
@@ -49,8 +48,6 @@ type broadcastManager struct {
 	stats    *BroadcastStats
 }
 
-// start reserves the broadcast slot. It returns a cancellable context,
-// or ok=false if another broadcast is already running.
 func (bm *broadcastManager) start(stats *BroadcastStats) (ctx context.Context, ok bool) {
 	bm.mu.Lock()
 	defer bm.mu.Unlock()
@@ -64,8 +61,6 @@ func (bm *broadcastManager) start(stats *BroadcastStats) (ctx context.Context, o
 	return ctx, true
 }
 
-// stop stops the running broadcast and marks it as cancelled so the
-// progress message shows the cancellation instead of a summary.
 func (bm *broadcastManager) stop() {
 	bm.mu.Lock()
 	defer bm.mu.Unlock()
@@ -90,7 +85,6 @@ func (bm *broadcastManager) isActive() bool {
 	return bm.cancelFn != nil
 }
 
-// BroadcastFlags holds the parsed /broadcast options.
 type BroadcastFlags struct {
 	NoChat  bool
 	NoUser  bool
@@ -101,7 +95,6 @@ type BroadcastFlags struct {
 	PinLoud bool
 }
 
-// BroadcastStats tracks delivery progress for the status message.
 type BroadcastStats struct {
 	mu          sync.Mutex
 	TotalChats  int
@@ -118,7 +111,6 @@ type BroadcastStats struct {
 	Reasons     map[string]int
 }
 
-// broadcastTarget is one recipient of the broadcast.
 type broadcastTarget struct {
 	id     int64
 	isUser bool
@@ -282,7 +274,6 @@ func parseBroadcastCommand(m *td.Message) (*BroadcastFlags, string, error) {
 			flags.Delay = delay
 			i++
 		case "-cancel", "--cancel":
-			// handled by the caller
 		default:
 			contentWords = append(contentWords, words[i])
 		}
@@ -378,7 +369,6 @@ func (bm *broadcastManager) run(
 		bm.finalize(c, progressMsg, stats)
 	}()
 
-	// Preflight: log up front why forwarding may fail.
 	if rid := m.ReplyToMessageID(); rid > 0 {
 		props, perr := c.GetMessageProperties(m.ChatID(), rid)
 		if perr == nil {
@@ -440,7 +430,6 @@ func (bm *broadcastManager) send(
 		err  error
 	)
 
-	// TDLib must know the target chat before we can send/forward to it.
 	if cerr := ensureBroadcastChat(c, targetID); cerr != nil {
 		logger.Errorf("Broadcast failed for %d: %v", targetID, cerr)
 		return cerr
@@ -502,10 +491,6 @@ func (bm *broadcastManager) send(
 	return nil
 }
 
-// ensureBroadcastChat makes sure TDLib has the chat loaded. Private chats that
-// are not in TDLib's local database yet (common for users stored in our DB
-// only) are created on the fly; otherwise forward/send fails with
-// "Chat to forward messages to not found".
 func ensureBroadcastChat(c *td.Client, id int64) error {
 	if _, err := c.GetChat(id); err == nil {
 		return nil
@@ -516,7 +501,6 @@ func ensureBroadcastChat(c *td.Client, id int64) error {
 	return err
 }
 
-// isBroadcastSkipError reports errors that are expected for removed/blocked targets.
 func isBroadcastSkipError(err error) bool {
 	msg := strings.ToLower(err.Error())
 	for _, s := range []string{
@@ -547,7 +531,6 @@ func broadcastReason(err error) string {
 	return r
 }
 
-// wait sleeps the configured delay, pausing longer after every 30 sends.
 func (bm *broadcastManager) wait(ctx context.Context, sent int, delay float64) bool {
 	d := time.Duration(delay * float64(time.Second))
 	if sent%30 == 0 {
