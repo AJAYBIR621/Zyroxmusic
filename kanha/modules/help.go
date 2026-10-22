@@ -42,10 +42,30 @@ For more info, visit our <a href="%s">Support Chat</a>.`, config.SupportChat)
 }
 
 func richHelp(text string) *td.InputRichMessage {
-	return &td.InputRichMessage{Source: &td.RichMessageSourceHtml{Text: text}}
+	var b strings.Builder
+	for _, line := range strings.Split(text, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		open, closing := "", ""
+		if strings.HasPrefix(line, "<blockquote>") {
+			open = "<blockquote>"
+			line = strings.TrimPrefix(line, open)
+		}
+		if strings.HasSuffix(line, "</blockquote>") {
+			closing = "</blockquote>"
+			line = strings.TrimSuffix(line, closing)
+		}
+		if line != "" {
+			line = "<p>" + line + "</p>"
+		}
+		b.WriteString(open + line + closing)
+	}
+	return &td.InputRichMessage{Source: &td.RichMessageSourceHtml{Text: b.String()}}
 }
 
-func editHelpMessage(c *td.Client, cb *td.UpdateNewCallbackQuery, msg *td.Message, text string, markup td.ReplyMarkup) error {
+func editHelpMessage(c *td.Client, cb *td.UpdateNewCallbackQuery, msg *td.Message, text string, markup td.ReplyMarkup, rich bool) error {
 	if isPhotoMessage(msg) {
 		_, err := cb.EditMessageCaption(c, text, &td.EditCaptionOpts{
 			ReplyMarkup: markup,
@@ -53,14 +73,18 @@ func editHelpMessage(c *td.Client, cb *td.UpdateNewCallbackQuery, msg *td.Messag
 		return err
 	}
 
-	_, err := c.EditMessageText(cb.ChatId, &td.InputMessageRichMessage{Message: richHelp(text)}, cb.MessageId, &td.EditMessageTextOpts{
-		ReplyMarkup: markup,
-	})
-	if err != nil {
-		_, err = cb.EditMessageText(c, text, &td.EditTextMessageOpts{
+	if rich {
+		_, err := c.EditMessageText(cb.ChatId, &td.InputMessageRichMessage{Message: richHelp(text)}, cb.MessageId, &td.EditMessageTextOpts{
 			ReplyMarkup: markup,
 		})
+		if err == nil {
+			return nil
+		}
 	}
+
+	_, err := cb.EditMessageText(c, text, &td.EditTextMessageOpts{
+		ReplyMarkup: markup,
+	})
 	return err
 }
 
@@ -87,7 +111,7 @@ func helpHandler(c *td.Client, m *td.Message) error {
 		return err
 	}
 
-	_, err := m.ReplyRichMessage(c, richHelp(F(m.ChatID(), "help_main")), &td.SendTextMessageOpts{
+	_, err := m.ReplyText(c, F(m.ChatID(), "help_main"), &td.SendTextMessageOpts{
 		ReplyMarkup: core.GetHelpKeyboard(m.ChatID()),
 	})
 	return err
@@ -101,7 +125,7 @@ func helpCB(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return err
 	}
 
-	return editHelpMessage(c, cb, msg, F(cb.ChatId, "help_main"), core.GetHelpKeyboard(cb.ChatId))
+	return editHelpMessage(c, cb, msg, F(cb.ChatId, "help_main"), core.GetHelpKeyboard(cb.ChatId), false)
 }
 
 func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
@@ -154,7 +178,7 @@ func helpCallbackHandler(c *td.Client, cb *td.UpdateNewCallbackQuery) error {
 		return err
 	}
 
-	return editHelpMessage(c, cb, msg, text, btn)
+	return editHelpMessage(c, cb, msg, text, btn, parts[1] != "main")
 }
 
 func showHelpFor(c *td.Client, m *td.Message, cmd string) error {
