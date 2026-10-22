@@ -112,6 +112,26 @@ func showTrackMessage(
 	}
 
 	if t.Artwork != "" && shouldShowThumb(chatID) {
+		content := &td.InputMessagePhoto{
+			Photo: &td.InputPhoto{
+				Photo: td.InputFileRemote{Id: utils.CleanURL(t.Artwork)},
+			},
+		}
+		if statusMsg != nil {
+			if caption, err := c.GetFormattedText(msgText, nil, "HTML"); err == nil {
+				content.Caption = caption
+				m, err := c.EditMessageMedia(
+					chatID,
+					content,
+					statusMsg.Id,
+					&td.EditMessageMediaOpts{ReplyMarkup: markup},
+				)
+				if err == nil {
+					return m
+				}
+				logger.Errorf("EditMessageMedia (track message) failed: %v", err)
+			}
+		}
 		if statusMsg != nil {
 			_ = statusMsg.Delete(c, true)
 		}
