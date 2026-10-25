@@ -1,19 +1,19 @@
 {
-    "name": "KanhaMusic",
+    "name": "ZyroxMusic",
     "description": "A Telegram bot that streams music into group voice chats with seamless playback and control.",
     "keywords": ["telegram", "bot", "music", "go", "voice-chat"],
-    "repository": "https://github.com/Oyekanhaa/KanhaMusic",
-    "website": "https://github.com/Oyekanhaa/KanhaMusic",
+    "repository": "https://github.com/AJAYBIR621/Zyroxmusic",
+    "website": "https://github.com/AJAYBIR621/Zyroxmusic",
     "stack": "container",
     "env": {
         "API_ID": {
             "description": "Your Telegram API ID from my.telegram.org.",
-            "value": "37252222",
+            "value": "",
             "required": true
         },
         "API_HASH": {
             "description": "Your Telegram API Hash from my.telegram.org.",
-            "value": "7cde4cbc12392cdecd034e5e068657de",
+            "value": "",
             "required": true
         },
         "TOKEN": {
@@ -28,7 +28,7 @@
         },
         "DB_NAME": {
             "description": "Database Name for MongoDB.",
-            "value": "MeowMusic",
+            "value": "ZyroxMusic",
             "required": false
         },
         "STRING_SESSION": {
@@ -48,7 +48,7 @@
         },
         "OWNER_ID": {
             "description": "The Telegram user ID of the bot's owner.",
-            "value": "8617644501",
+            "value": "",
             "required": true
         },
         "LOGGER_ID": {
@@ -78,17 +78,17 @@
         },
         "START_IMAGES": {
             "description": "Optional list of /start image URLs separated by spaces, commas, or semicolons. A random image is used each time.",
-            "value": "https://yukiapi.site/file/6RldzdNt",
+            "value": "",
             "required": false
         },
         "REPO_IMG_URL": {
             "description": "Image URL displayed in the /repo command response.",
-            "value": "https://telegra.ph/file/91533956c91d0fd7c9f20.jpg",
+            "value": "",
             "required": false
         },
         "PING_IMG_URL": {
             "description": "Image URL displayed in the /ping command response.",
-            "value": "https://telegra.ph/file/91533956c91d0fd7c9f20.jpg",
+            "value": "",
             "required": false
         },
         "EFFECT_IDS": {
@@ -98,12 +98,12 @@
         },
         "SUPPORT_CHAT": {
             "description": "The URL of your support chat.",
-            "value": "https://t.me/MeowClone",
+            "value": "",
             "required": false
         },
         "SUPPORT_CHANNEL": {
             "description": "The URL of your support channel.",
-            "value": "https://t.me/MeowCloner",
+            "value": "",
             "required": false
         },
         "COOKIES_LINK": {

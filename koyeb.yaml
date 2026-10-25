@@ -1,9 +1,9 @@
-name: kanhamusic
+name: zyroxmusic
 services:
-  - name: kanhamusic
+  - name: zyroxmusic
     type: worker
     git:
-      repository: Oyekanhaa/KanhaMusic
+      repository: AJAYBIR621/Zyroxmusic
       branch: dev
       builder: dockerfile
       dockerfile: Dockerfile

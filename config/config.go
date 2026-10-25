@@ -36,7 +36,7 @@ var (
 	StringSessions = getEnvStrings("STRING_SESSIONS")
 
 	// Optional
-	DBName        = getEnv("DB_NAME", "MeowMusic")
+	DBName        = getEnv("DB_NAME", "ZyroxMusic")
 	SessionType   = getEnv("SESSION_TYPE", "pyrogram")
 	LoggerID      = getEnvInt64("LOGGER_ID", 0)
 	OwnerID       = getEnvInt64("OWNER_ID", 0)
@@ -51,8 +51,8 @@ var (
 	LeaveOnDemoted = getEnvBool("LEAVE_ON_DEMOTED", false)
 	QueueLimit     = getEnvInt("QUEUE_LIMIT", 24)
 
-	SupportChat    = getEnv("SUPPORT_CHAT", "https://t.me/MeowClone")
-	SupportChannel = getEnv("SUPPORT_CHANNEL", "https://t.me/Meowcloner")
+	SupportChat    = getEnv("SUPPORT_CHAT", "https://github.com/AJAYBIR621/Zyroxmusic")
+	SupportChannel = getEnv("SUPPORT_CHANNEL", "https://github.com/AJAYBIR621/Zyroxmusic")
 	CookiesLink    = getEnv("COOKIES_LINK", "")
 	SetCmds        = getEnvBool("SET_CMDS", false)
 	MaxAuthUsers   = getEnvInt("MAX_AUTH_USERS", 25)
@@ -61,12 +61,12 @@ var (
 
 	PingImage = getEnv(
 		"PING_IMG_URL",
-		"https://telegra.ph/file/91533956c91d0fd7c9f20.jpg",
+		"",
 	)
 
 	RepoImage = getEnv(
 		"REPO_IMG_URL",
-		"https://yukiapi.site/file/6RldzdNt",
+		"",
 	)
 
 	Port = getEnv("PORT", "8000")
