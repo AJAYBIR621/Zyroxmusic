@@ -51,8 +51,8 @@ var (
 	LeaveOnDemoted = getEnvBool("LEAVE_ON_DEMOTED", false)
 	QueueLimit     = getEnvInt("QUEUE_LIMIT", 24)
 
-	SupportChat    = getEnv("SUPPORT_CHAT", "https://t.me/MeowClone")
-	SupportChannel = getEnv("SUPPORT_CHANNEL", "https://t.me/Meowcloner")
+	SupportChat    = getEnv("SUPPORT_CHAT", "")
+	SupportChannel = getEnv("SUPPORT_CHANNEL", "")
 	CookiesLink    = getEnv("COOKIES_LINK", "")
 	SetCmds        = getEnvBool("SET_CMDS", false)
 	MaxAuthUsers   = getEnvInt("MAX_AUTH_USERS", 25)
@@ -61,12 +61,12 @@ var (
 
 	PingImage = getEnv(
 		"PING_IMG_URL",
-		"https://telegra.ph/file/91533956c91d0fd7c9f20.jpg",
+		"",
 	)
 
 	RepoImage = getEnv(
 		"REPO_IMG_URL",
-		"https://yukiapi.site/file/6RldzdNt",
+		"",
 	)
 
 	Port = getEnv("PORT", "8000")
