@@ -51,8 +51,8 @@ var (
 	LeaveOnDemoted = getEnvBool("LEAVE_ON_DEMOTED", false)
 	QueueLimit     = getEnvInt("QUEUE_LIMIT", 24)
 
-	SupportChat    = getEnv("SUPPORT_CHAT", "")
-	SupportChannel = getEnv("SUPPORT_CHANNEL", "")
+	SupportChat    = getEnv("SUPPORT_CHAT", "https://github.com/AJAYBIR621/Zyroxmusic")
+	SupportChannel = getEnv("SUPPORT_CHANNEL", "https://github.com/AJAYBIR621/Zyroxmusic")
 	CookiesLink    = getEnv("COOKIES_LINK", "")
 	SetCmds        = getEnvBool("SET_CMDS", false)
 	MaxAuthUsers   = getEnvInt("MAX_AUTH_USERS", 25)
