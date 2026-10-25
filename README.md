@@ -7,19 +7,19 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Oyekanhaa/ZyroxMusic/stargazers">
+  <a href="https://github.com/AJAYBIR621/Zyroxmusic/stargazers">
     <img src="https://img.shields.io/badge/GitHub-Stars-FFD700?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Stars">
   </a>
-  <a href="https://github.com/Oyekanhaa/ZyroxMusic/fork">
+  <a href="https://github.com/AJAYBIR621/Zyroxmusic/fork">
     <img src="https://img.shields.io/badge/GitHub-Forks-00C853?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Forks">
   </a>
   <a href="https://go.dev/">
     <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go Version">
   </a>
-  <a href="https://github.com/Oyekanhaa/ZyroxMusic/releases">
+  <a href="https://github.com/AJAYBIR621/Zyroxmusic/releases">
     <img src="https://img.shields.io/badge/Release-v1.0.0-FF6F00?style=for-the-badge&logo=semver&logoColor=white" alt="Latest Release">
   </a>
-  <a href="https://github.com/Oyekanhaa/ZyroxMusic/blob/dev/LICENSE">
+  <a href="https://github.com/AJAYBIR621/Zyroxmusic/blob/dev/LICENSE">
     <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="License">
   </a>
   <a href="https://t.me/MeowClone">
@@ -47,19 +47,19 @@
 Deploy **ZyroxMusic** in under 60 seconds on your favorite cloud provider:
 
 <p align="center">
-  <a href="https://heroku.com/deploy?template=https://github.com/Oyekanhaa/ZyroxMusic">
+  <a href="https://heroku.com/deploy?template=https://github.com/AJAYBIR621/Zyroxmusic">
     <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku" height="38">
   </a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://railway.com/new/template?template=https://github.com/Oyekanhaa/ZyroxMusic">
+  <a href="https://railway.com/new/template?template=https://github.com/AJAYBIR621/Zyroxmusic">
     <img src="https://railway.com/button.svg" alt="Deploy on Railway" height="38">
   </a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://render.com/deploy?repo=https://github.com/Oyekanhaa/ZyroxMusic">
+  <a href="https://render.com/deploy?repo=https://github.com/AJAYBIR621/Zyroxmusic">
     <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" height="38">
   </a>
   &nbsp;&nbsp;&nbsp;
-  <a href="https://app.koyeb.com/deploy?type=git&repository=Oyekanhaa/ZyroxMusic&branch=dev&name=zyroxmusic&service_type=worker&env[API_ID]=&env[API_HASH]=&env[TOKEN]=&env[MONGO_DB_URI]=&env[STRING_SESSION]=&env[OWNER_ID]=">
+  <a href="https://app.koyeb.com/deploy?type=git&repository=AJAYBIR621/Zyroxmusic&branch=dev&name=zyroxmusic&service_type=worker&env[API_ID]=&env[API_HASH]=&env[TOKEN]=&env[MONGO_DB_URI]=&env[STRING_SESSION]=&env[OWNER_ID]=">
     <img src="https://www.koyeb.com/static/images/deploy/button.svg" alt="Deploy to Koyeb" height="38">
   </a>
 </p>
@@ -82,7 +82,7 @@ Deploy **ZyroxMusic** in under 60 seconds on your favorite cloud provider:
   ### 🚀 Step-by-Step Setup
   ```bash
   # 1. Clone the repository
-  git clone https://github.com/Oyekanhaa/ZyroxMusic.git
+  git clone https://github.com/AJAYBIR621/Zyroxmusic.git
   cd ZyroxMusic
 
   # 2. Run automated dependency installer
@@ -126,7 +126,7 @@ Deploy **ZyroxMusic** in under 60 seconds on your favorite cloud provider:
   ### 🚀 Docker Compose Setup
   ```bash
   # 1. Clone repo
-  git clone https://github.com/Oyekanhaa/ZyroxMusic.git
+  git clone https://github.com/AJAYBIR621/Zyroxmusic.git
   cd ZyroxMusic
 
   # 2. Prepare environment variables
