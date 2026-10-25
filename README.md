@@ -22,7 +22,7 @@
   <a href="https://github.com/AJAYBIR621/Zyroxmusic/blob/dev/LICENSE">
     <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="License">
   </a>
-  <a href="https://t.me/MeowClone">
+  <a href="https://github.com/AJAYBIR621/Zyroxmusic">
     <img src="https://img.shields.io/badge/Telegram-Support-26A69A?style=for-the-badge&logo=telegram&logoColor=white" alt="Support Chat">
   </a>
 </p>
@@ -175,8 +175,8 @@ Deploy **ZyroxMusic** in under 60 seconds on your favorite cloud provider:
   | `DURATION_LIMIT`| No | `4200` | Max track duration in seconds (70 minutes) |
   | `QUEUE_LIMIT` | No | `24` | Max tracks allowed in queue per chat |
   | `DEFAULT_LANG` | No | `en` | Default language code (`en`, `hi`, `ar`, `tr`) |
-  | `SUPPORT_CHAT` | No | `https://t.me/MeowClone` | Link to your Telegram support chat |
-  | `SUPPORT_CHANNEL`| No | `https://t.me/Meowcloner` | Link to your Telegram announcement channel |
+  | `SUPPORT_CHAT` | No | empty (configure your own support link) | Link to your Telegram support chat |
+  | `SUPPORT_CHANNEL`| No | empty (configure your own channel link) | Link to your Telegram announcement channel |
   | `SPOTIFY_CLIENT_ID` | No | — | Spotify Client ID for track resolution |
   | `SPOTIFY_CLIENT_SECRET` | No | — | Spotify Client Secret for track resolution |
   | `COOKIES_LINK` | No | — | batbin URL to YouTube cookies file for `yt-dlp` |
