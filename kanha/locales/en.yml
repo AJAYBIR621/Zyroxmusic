@@ -1018,7 +1018,7 @@ speed_reset_success: "{emoji:✅} ᴘʟᴧʏʙᴧᴄᴋ sᴘєєᴅ ʀєsєᴛ �
 
 speed_set: "{emoji:🚀} ᴘʟᴧʏʙᴧᴄᴋ sᴘєєᴅ sєᴛ ᴛσ <b>{speed}x</b> ʙʏ {user}."
 
-start_private: "<blockquote><b>sᴧʟᴜᴛᴧᴛɪσɴs</b> {user},</blockquote>\n<blockquote expandable><b>✧ ᴡᴇʟᴄσᴍᴇ ᴛσ {bot} — ᴧ ᴘσᴡᴇʀғᴜʟ ᴧɴᴅ ʜɪɢʜ-sᴘᴇᴇᴅ ᴛɢ ᴍᴜsɪᴄ ʙσᴛ</b>\n<b>✧ ʙᴜɪʟᴛ ғσʀ sᴍσσᴛʜ • sᴛᴧʙʟᴇ • ʟᴧɢ-ғʀᴇᴇ ᴍᴜsɪᴄ sᴛʀᴇᴧᴍɪɴɢ</b>\n<b>✧ ᴘσᴡᴇʀᴇᴅ ʙʏ ᴧɴ σᴘᴛɪᴍɪᴢᴇᴅ ʏσᴜᴛᴜʙᴇ ᴧᴘɪ ғσʀ ɪɴsᴛᴧɴᴛ ᴘʟᴧʏʙᴧᴄᴋ</b>\n<b>✧ ᴇɴᴊσʏ ʜɪɢʜ ǫᴜᴧʟɪᴛʏ ᴧᴜᴅɪσ ᴡɪᴛʜ sᴇᴧᴍʟᴇss ᴄσɴᴛʀσʟ</b>\n<b>•──────────────•</b>\n<b>✧ ᴜsᴇ ʜᴇʟᴘ ᴛσ ᴠɪᴇᴡ ᴧʟʟ ᴄσᴍᴍᴧɴᴅs ᴧɴᴅ ғᴇᴧᴛᴜʀᴇs</b></blockquote> "
+start_private: "<blockquote><b>Welcome {user}!</b></blockquote>\n<blockquote expandable><b>🎵 Welcome to {bot} — ZyroxMusic</b>\n<b>• Stream music in Telegram voice chats</b>\n<b>• Play tracks from supported music sources</b>\n<b>• Use the buttons below to explore commands and settings</b>\n<b>• Add me to your group and start a voice chat to play music</b></blockquote>
 call_discarded: "📴 ᴛʜє ᴠσɪᴄє ᴄʜᴧᴛ ᴡᴧs єηᴅєᴅ, sσ ᴘʟᴧʏʙᴧᴄᴋ ʜᴧs sᴛσᴘᴘєᴅ.\n\n💐 sᴛᴧʀᴛ ᴧ ηєᴡ ᴠσɪᴄє ᴄʜᴧᴛ ᴧηᴅ ᴜsє /play ᴧɢᴧɪη."
 
 start_group: "<b>{emoji:💫} ɪ’ᴍ ʜєʀє!</b> ᴛʀʏ ᴧ ᴄσᴍᴍᴧηᴅ… ɪғ ʏσᴜ ᴛʜɪηᴋ ʏσᴜ ᴄᴧη ʜᴧηᴅʟє ᴍє {emoji:😉}"
