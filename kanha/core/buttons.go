@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
- * Repository: https://github.com/Oyekanhaa/KanhaMusic
+ * Repository: https://github.com/AJAYBIR621/Zyroxmusic
  */
 
 package core
@@ -264,14 +264,14 @@ func GetStartMarkup(chatID int64) td.ReplyMarkup {
 			},
 			{
 				DataBtn(F(chatID, "LANG_BTN"), "lang:select"),
-				UrlBtn(F(chatID, "SOURCE_BTN"), "https://github.com/Oyekanhaa/KanhaMusic"),
+				UrlBtn(F(chatID, "SOURCE_BTN"), "https://github.com/AJAYBIR621/Zyroxmusic"),
 			},
 		},
 	}
 }
 
 func GetRepoMarkup(chatID int64, devURL string) td.ReplyMarkup {
-	repoURL := "https://github.com/Oyekanhaa/KanhaMusic"
+	repoURL := "https://github.com/AJAYBIR621/Zyroxmusic"
 	if devURL == "" {
 		if config.DevURL != "" {
 			devURL = config.DevURL
@@ -280,7 +280,7 @@ func GetRepoMarkup(chatID int64, devURL string) td.ReplyMarkup {
 		} else if config.OwnerID != 0 {
 			devURL = fmt.Sprintf("tg://openmessage?user_id=%d", config.OwnerID)
 		} else {
-			devURL = "https://t.me/Oyekanhaa"
+			devURL = "https://github.com/AJAYBIR621/Zyroxmusic"
 		}
 	}
 	return &td.ReplyMarkupInlineKeyboard{
