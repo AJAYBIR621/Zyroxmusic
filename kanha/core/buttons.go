@@ -247,6 +247,17 @@ func GetGroupHelpKeyboard(chatID int64) td.ReplyMarkup {
 }
 
 func GetStartMarkup(chatID int64) td.ReplyMarkup {
+	ownerURL := config.DevURL
+	if ownerURL == "" {
+		if config.OwnerUsername != "" {
+			ownerURL = "https://t.me/" + strings.TrimPrefix(config.OwnerUsername, "@")
+		} else if config.OwnerID != 0 {
+			ownerURL = fmt.Sprintf("tg://openmessage?user_id=%d", config.OwnerID)
+		} else {
+			ownerURL = config.SupportChat
+		}
+	}
+
 	return &td.ReplyMarkupInlineKeyboard{
 		Rows: [][]td.InlineKeyboardButton{
 			{
@@ -264,7 +275,7 @@ func GetStartMarkup(chatID int64) td.ReplyMarkup {
 			},
 			{
 				DataBtn(F(chatID, "LANG_BTN"), "lang:select"),
-				UrlBtn(F(chatID, "SOURCE_BTN"), "https://github.com/Oyekanhaa/KanhaMusic"),
+				UrlBtn(F(chatID, "OWNER_BTN"), ownerURL),
 			},
 		},
 	}
