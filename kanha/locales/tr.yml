@@ -15,6 +15,7 @@ START_HELP_BTN: "❓ Yardım ve Komutlar"
 UPDATES_BTN: "📢 Güncellemeler"
 SUPPORT_BTN: "💬 Destek"
 SOURCE_BTN: "🔗 Kaynak Kodu"
+OWNER_BTN: "👑 Sahibi"
 REPO_DEV_BTN: "DEVELOPER"
 REPO_BTN: "REPO"
 
