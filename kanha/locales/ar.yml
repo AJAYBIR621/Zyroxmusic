@@ -15,6 +15,7 @@ START_HELP_BTN: "❓ المساعدة والأوامر"
 UPDATES_BTN: "📢 التحديثات"
 SUPPORT_BTN: "💬 الدعم"
 SOURCE_BTN: "🔗 الكود المصدري"
+OWNER_BTN: "👑 المالك"
 REPO_DEV_BTN: "DEVELOPER"
 REPO_BTN: "REPO"
 
