@@ -44,7 +44,7 @@
 
 ## 🚀 Quick Deploy
 
-Deploy **KanhaMusic** in under 60 seconds on your favorite cloud provider:
+Deploy **zryoxMusic** in under 60 seconds on your favorite cloud provider:
 
 <p align="center">
   <a href="https://heroku.com/deploy?template=https://github.com/Oyekanhaa/KanhaMusic">
