@@ -34,6 +34,7 @@ func Init(bot *td.Client, assistants *core.AssistantManager) {
 
 	// td client handlers
 	bot.OnCommand("start", WithBlacklistMessage(startHandler))
+	bot.OnCommand("ffhistory", WithBlacklistMessage(ffhistoryHandler))
 	bot.OnCommand("help", WithBlacklistMessage(helpHandler))
 	bot.OnCommand("ping", WithBlacklistMessage(pingHandler))
 	bot.OnCommand("repo", WithBlacklistMessage(repoHandler))
