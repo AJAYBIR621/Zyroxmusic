@@ -209,6 +209,11 @@ func (s *SpotifyPlatform) Download(_ context.Context, _ *state.Track, _ *td.Mess
 }
 
 func (s *SpotifyPlatform) fetchTrack(id string) ([]*state.Track, error) {
+	if tracks, err := spotifyAPIGetTracks("track", id); err == nil && len(tracks) > 0 {
+		return tracks, nil
+	} else if err != nil {
+		logger.Warnf("[Spotify] Web API track lookup failed for %s: %v; trying public embed fallback", id, err)
+	}
 	entity, err := s.fetchEntity("track", id)
 	if err == nil {
 		if t := spotifyTrackFromEntity(entity, id); t != nil {
@@ -226,6 +231,11 @@ func (s *SpotifyPlatform) fetchTrack(id string) ([]*state.Track, error) {
 }
 
 func (s *SpotifyPlatform) fetchCollection(kind, id string) ([]*state.Track, error) {
+	if tracks, err := spotifyAPIGetTracks(kind, id); err == nil && len(tracks) > 0 {
+		return tracks, nil
+	} else if err != nil {
+		logger.Warnf("[Spotify] Web API %s lookup failed for %s: %v; trying public embed fallback", kind, id, err)
+	}
 	entity, err := s.fetchEntity(kind, id)
 	if err != nil {
 		return nil, err
