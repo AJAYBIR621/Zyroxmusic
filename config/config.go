@@ -45,6 +45,8 @@ var (
 	DisableColour = getEnvBool("DISABLE_COLOUR", false)
 	MeowAPIURL    = getEnv("MEOW_API_URL", "https://music.yukiapi.site")
 	MeowAPIKey    = getEnv("MEOW_API_KEY")
+	SpotifyClientID     = getEnv("SPOTIFY_CLIENT_ID")
+	SpotifyClientSecret = getEnv("SPOTIFY_CLIENT_SECRET")
 
 	DefaultLang    = getEnv("DEFAULT_LANG", "en")
 	DurationLimit  = getEnvInt("DURATION_LIMIT", 4200)
